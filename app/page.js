@@ -8,7 +8,7 @@ import Dice from '../components/Dice.js';
 
 const { NATIONS, NATION_KEYS, MAP_TYPES, RES_LABEL } = E;
 // 已完成水墨國徽的國家（public/ink/logo/XX.webp）；其餘國家暫時沒有圖
-const LOGO = new Set(['JP', 'UK', 'US', 'FR', 'DE']);
+const LOGO = new Set(['JP', 'UK', 'US', 'IT', 'FR', 'DE', 'SU']);
 const Logo = ({ k }) => (LOGO.has(k) ? <img className="nlogo" src={`/ink/logo/${k}.webp`} alt="" width="400" height="400" loading="lazy" /> : null);
 
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch { return null; } return null; }
