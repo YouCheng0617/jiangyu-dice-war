@@ -30,11 +30,17 @@ export default function MapCanvas({ map, st, ui, onTap, onHover }) {
     g.hatchP = ctx.createPattern(g.hatch, 'repeat');
     g.burnP = ctx.createPattern(g.burn, 'repeat');
     const edge = { key: '', paths: [] }, own = { key: '', canvas: null }, rings = new Map();
+    // 各國水墨國徽：載入完成後重畫領土層（領土會變成那張圖）
+    const logos = {}, envx = { logoN: 0 };
+    for (const k of Object.keys(NATIONS)) {
+      const im = new Image(); im.src = `/ink/logo/${k}.webp`;
+      im.onload = () => { logos[k] = im; envx.logoN++; };
+    }
     let raf;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const draw = (ts) => {
       const { st, ui } = live.current;
-      drawScene(ctx, g, map, st, ui, ts, { th, ncol, dpr, reduce, edge, own, rings, cssW: cv.clientWidth });
+      drawScene(ctx, g, map, st, ui, ts, { th, ncol, dpr, reduce, edge, own, rings, logos, get logoN() { return envx.logoN; }, cssW: cv.clientWidth });
       raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);

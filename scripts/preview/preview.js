@@ -147,7 +147,12 @@ if (cv) {
   const th = mapTheme(), ncol = nationColors(NATION_KEYS);
   const g = buildGeo(map, dpr, th);
   g.hatchP = ctx.createPattern(g.hatch, 'repeat'); g.burnP = ctx.createPattern(g.burn, 'repeat');
-  drawScene(ctx, g, map, view === 'lobby' ? null : st, view === 'lobby' ? null : st.__ui, 1000, { th, ncol, dpr, reduce: true, edge: { key: '', paths: [] }, own: { key: '', canvas: null }, rings: new Map(), cssW: cv.clientWidth });
+  // 預覽也載入各國國徽（正式版在 components/MapCanvas.js 載入）
+  const logos = {};
+  if (new URLSearchParams(location.search).get('logo') !== '0') {
+    await Promise.all(NATION_KEYS.map((k) => new Promise((res) => { const im = new Image(); im.onload = () => { logos[k] = im; res(); }; im.onerror = res; im.src = `/ink/logo/${k}.webp`; })));
+  }
+  drawScene(ctx, g, map, view === 'lobby' ? null : st, view === 'lobby' ? null : st.__ui, 1000, { th, ncol, dpr, reduce: true, edge: { key: '', paths: [] }, own: { key: '', canvas: null }, rings: new Map(), logos, logoN: 1, cssW: cv.clientWidth });
 }
 // 背景水紋（和正式版同一份程式）
 if (theme !== 'classic') startSeaBg(document.getElementById('seabg'));
