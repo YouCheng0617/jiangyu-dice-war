@@ -108,6 +108,8 @@ p { margin: 0; }
 .nlist { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
 .nlist li { padding: 10px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--pc); display: flex; flex-direction: column; }
 .nlist b { font-family: var(--f-display); }
+.nlogo { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
+.nbtn .nlogo { margin-bottom: 6px; }
 .nlist span { font-size: 12px; color: var(--muted); }
 .join { gap: 12px; }
 .or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }

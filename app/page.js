@@ -7,6 +7,9 @@ import MapCanvas from '../components/MapCanvas.js';
 import Dice from '../components/Dice.js';
 
 const { NATIONS, NATION_KEYS, MAP_TYPES, RES_LABEL } = E;
+// 已完成水墨國徽的國家（public/ink/logo/XX.webp）；其餘國家暫時沒有圖
+const LOGO = new Set(['JP', 'UK', 'US', 'FR', 'DE']);
+const Logo = ({ k }) => (LOGO.has(k) ? <img className="nlogo" src={`/ink/logo/${k}.webp`} alt="" width="400" height="400" loading="lazy" /> : null);
 
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch { return null; } return null; }
 function getToken() {
@@ -145,6 +148,7 @@ function Entry({ name, setName, onCreate, onJoin, busy }) {
         <ul className="nlist">
           {NATION_KEYS.map((k) => (
             <li key={k} data-n={k} style={{ '--pc': NATIONS[k].color }}>
+              <Logo k={k} />
               <b>{NATIONS[k].name}</b><span>{NATIONS[k].skill}</span>
             </li>
           ))}
@@ -217,6 +221,7 @@ function Lobby({ st, you, act, flash }) {
                       const taken = st.players.some((q, j) => j !== i && q.nation === k);
                       return (
                         <button key={k} data-n={k} className={'nbtn' + (p.nation === k ? ' on' : '')} style={{ '--pc': NATIONS[k].color }} disabled={taken} onClick={() => act({ type: 'nation', nation: k })}>
+                          <Logo k={k} />
                           <b>{NATIONS[k].name}</b><small>{taken ? '對手已選' : NATIONS[k].skill}</small>
                         </button>
                       );
