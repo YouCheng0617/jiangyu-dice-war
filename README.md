@@ -1,37 +1,38 @@
 # 疆域骰戰
 
-兩人連線的回合制擲骰征服遊戲。Next.js 15 + Socket.IO，手機、平板、電腦皆可玩。
+兩人連線的回合制擲骰征服遊戲。Next.js 15 純前端 + MQTT 中繼，手機、平板、電腦皆可玩，可直接部署到 Vercel。
 
 ## 啟動
 
 ```bash
 npm install
-npm run dev          # 開發模式
-# 或
-npm run build && npm start   # 正式模式
+npm run dev        # http://localhost:3000，同 Wi-Fi 的手機用電腦的區域網路 IP
 ```
 
-終端機會印出兩個網址：
+## 部署（Vercel）
 
-- `http://localhost:3000`：本機
-- `http://192.168.x.x:3000`：同一個 Wi-Fi 的手機/平板開這個
+到 [vercel.com/new](https://vercel.com/new) 匯入這個 GitHub repo，全部用預設值按 Deploy 即可。之後每次 push 到 `main` 都會自動重新部署。
 
-建立房間後把房號（或連結）給對手即可加入。斷線重開網頁會回到原本的座位；第三個人進房會變成觀戰。
+## 連線方式
 
-> 想讓不同網路的朋友連進來，需要部署到支援 WebSocket 的長駐主機（Render、Railway、Fly.io、VPS 等），啟動指令用 `npm run build && npm start`。Vercel 的 serverless 不支援這種常駐連線。
+沒有自己的遊戲伺服器。**開房的人（房主）的瀏覽器**負責結算規則與擲骰，雙方透過公共 MQTT 中繼（預設 `wss://broker.hivemq.com:8884/mqtt`，可用環境變數 `NEXT_PUBLIC_MQTT_URL` 換成自己的）交換訊息。
+
+- 房主要開著頁面，對局才能進行；房主重新整理或重開會自動接回原本的局（存在房主瀏覽器的 localStorage）。
+- 客人斷線重開會回到原本座位；第三個人進房會變觀戰。
+- 中繼是公開的，房間內容（玩家名稱、棋局）技術上別人可以讀到，請不要放敏感資訊。
 
 ## 檔案
 
 | 檔案 | 內容 |
 | --- | --- |
-| `server.js` | Next.js 自訂伺服器 + Socket.IO 房間；所有骰子都在伺服器擲 |
-| `lib/game.js` | 規則引擎（國家技能、判定表、行動結算），前後端共用 |
-| `lib/mapgen.js` | 地圖生成（大陸/群島/混合），同一個 seed 前後端結果相同 |
+| `lib/game.js` | 規則引擎（國家技能、判定表、行動結算） |
+| `lib/mapgen.js` | 地圖生成（大陸/群島/混合），同一個 seed 結果相同 |
+| `lib/net.js` | 連線層：房主/客人、MQTT 主題、在線偵測 |
 | `components/MapCanvas.js` | 地圖繪製與點擊 |
 | `components/Dice.js` | 擲骰動畫 |
 | `app/page.js` | 入口、大廳、對局畫面 |
 | `scripts/sim.js` | 引擎自動對戰測試：`npm run test:engine` |
-| `scripts/e2e.js` | 連線測試（先開伺服器）：`node scripts/e2e.js 3000` |
+| `scripts/e2e.js` | 連線測試（走真的公共中繼）：`npm run test:net` |
 
 ## 平衡數值（在 `lib/game.js` 調整）
 

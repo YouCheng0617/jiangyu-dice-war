@@ -270,3 +270,4 @@ p { margin: 0; }
 }
 
 .warn-t { color: #f0a59c; }
+.hostoff { margin: 0 0 12px; padding: 10px 14px; border-radius: 8px; background: #3a2c18; border: 1px solid #7a5d22; color: #f3d9a4; font-size: 14px; }

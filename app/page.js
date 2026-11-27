@@ -1,8 +1,8 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
 import * as E from '../lib/game.js';
 import { getMap } from '../lib/mapgen.js';
+import { Net, isHostOf, CODE_LEN } from '../lib/net.js';
 import MapCanvas from '../components/MapCanvas.js';
 import Dice from '../components/Dice.js';
 
@@ -18,8 +18,10 @@ const pct = (n) => Math.round((n / 12) * 100) + '%';
 const sign = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n);
 
 export default function Home() {
-  const sock = useRef(null);
+  const net = useRef(null);
   const [conn, setConn] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [hostOn, setHostOn] = useState(true);
   const [view, setView] = useState(null); // { st, you }
   const [dice, setDice] = useState(null);
   const [toast, setToast] = useState('');
@@ -28,8 +30,9 @@ export default function Home() {
   const animating = useRef(false);
   const seen = useRef(-1);
   const diceMsg = useRef(null);
+  const toastT = useRef(0);
 
-  const flash = useCallback((m) => { setToast(m); clearTimeout(flash.t); flash.t = setTimeout(() => setToast(''), 2600); }, []);
+  const flash = useCallback((m) => { setToast(m); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToast(''), 2800); }, []);
 
   const pump = useCallback(() => {
     if (animating.current) return;
@@ -47,23 +50,33 @@ export default function Home() {
     pump();
   }, []);
 
+  const reset = () => { queue.current = []; seen.current = -1; animating.current = false; diceMsg.current = null; setDice(null); setView(null); };
+
+  const enter = useCallback(async (code, asHost) => {
+    setBusy(true);
+    const nm = store('jy_name') || '玩家';
+    let r;
+    try { r = asHost ? await net.current.host(nm, code) : await net.current.join(code, nm); }
+    catch { r = { error: '連不上中繼伺服器，請檢查網路' }; }
+    if (r.aborted) return;
+    setBusy(false);
+    if (r.error) { flash(r.error); history.replaceState(null, '', location.pathname); reset(); return; }
+    history.replaceState(null, '', '?room=' + r.code);
+  }, [flash]);
+
   useEffect(() => {
     setName(store('jy_name') || '');
-    const s = io({ transports: ['websocket', 'polling'] });
-    sock.current = s;
-    s.on('connect', () => {
-      setConn(true);
-      const code = new URLSearchParams(location.search).get('room');
-      if (code) {
-        s.emit('join', { code, token: getToken(), name: store('jy_name') || '玩家' }, (res) => {
-          if (res?.error) { flash(res.error); history.replaceState(null, '', location.pathname); }
-        });
-      }
+    const n = new Net({
+      token: getToken(),
+      onState: (m) => { queue.current.push(m); pump(); },
+      onStatus: setConn,
+      onHost: setHostOn,
     });
-    s.on('disconnect', () => setConn(false));
-    s.on('state', (m) => { queue.current.push(m); pump(); });
-    return () => { s.disconnect(); };
-  }, [pump, flash]);
+    net.current = n;
+    const code = new URLSearchParams(location.search).get('room');
+    if (code) enter(code.toUpperCase(), isHostOf(code));
+    return () => n.close();
+  }, [pump, enter]);
 
   const diceDone = useCallback(() => {
     if (diceMsg.current) setView(diceMsg.current);
@@ -74,30 +87,19 @@ export default function Home() {
   }, [pump]);
 
   const saveName = (v) => { setName(v); store('jy_name', v); };
-  const create = () => {
-    sock.current.emit('create', { token: getToken(), name: name || '玩家' }, (res) => {
-      if (res?.error) return flash(res.error);
-      seen.current = -1;
-      history.replaceState(null, '', '?room=' + res.code);
-    });
-  };
-  const joinCode = (code) => {
-    sock.current.emit('join', { code, token: getToken(), name: name || '玩家' }, (res) => {
-      if (res?.error) return flash(res.error);
-      seen.current = -1;
-      history.replaceState(null, '', '?room=' + res.code);
-    });
-  };
+  const create = () => { reset(); enter(null, true); };
+  const joinCode = (code) => { reset(); enter(code, isHostOf(code)); };
   const leave = () => {
-    sock.current.emit('leave');
+    net.current.close(); setConn(false); setBusy(false);
     history.replaceState(null, '', location.pathname);
-    queue.current = []; seen.current = -1; setView(null);
+    reset();
   };
   const act = useCallback((a) => {
-    sock.current.emit('act', a, (res) => { if (res?.error) flash(res.error); });
+    net.current.act(a).then((r) => { if (r?.error) flash(r.error); });
   }, [flash]);
 
   const st = view?.st;
+  const guest = st && view.you !== 0;
   return (
     <div className="shell">
       <header className="top">
@@ -109,12 +111,13 @@ export default function Home() {
           </div>
         </div>
         <div className="topr">
-          <span className={'net ' + (conn ? 'ok' : 'down')}>{conn ? '已連線' : '連線中…'}</span>
+          {(st || busy) && <span className={'net ' + (conn ? 'ok' : 'down')}>{conn ? (guest && !hostOn ? '房主離線' : '已連線') : '連線中…'}</span>}
           {st && <button className="btn ghost sm" onClick={leave}>離開房間</button>}
         </div>
       </header>
 
-      {!st && <Entry name={name} setName={saveName} onCreate={create} onJoin={joinCode} conn={conn} />}
+      {st && guest && !hostOn && <p className="hostoff">房主暫時離線。房主重新打開遊戲頁面後就能繼續，進度不會不見。</p>}
+      {!st && <Entry name={name} setName={saveName} onCreate={create} onJoin={joinCode} busy={busy} />}
       {st && st.phase === 'lobby' && <Lobby st={st} you={view.you} act={act} flash={flash} />}
       {st && st.phase !== 'lobby' && <Game st={st} you={view.you} act={act} />}
 
@@ -132,13 +135,13 @@ export default function Home() {
 }
 
 // ── 入口 ──────────────────────────────────────────
-function Entry({ name, setName, onCreate, onJoin, conn }) {
+function Entry({ name, setName, onCreate, onJoin, busy }) {
   const [code, setCode] = useState('');
   return (
     <main className="entry">
       <section className="hero">
         <h2>畫下國界，擲出天下</h2>
-        <p>選一個國家、定下首都，向四周開墾空地。遇到對手就擲 d12：大成功直接拿地，大失敗則賠上自己的出兵地。先攻陷對方首都的一方獲勝。</p>
+        <p>選一個國家、定下首都，向四周開墾空地。遇到對手就擲 d12：大成功直接拿地，大失敗則賠上自己的出兵地。攻陷對方首都兩次的一方獲勝。</p>
         <ul className="nlist">
           {NATION_KEYS.map((k) => (
             <li key={k} style={{ '--pc': NATIONS[k].color }}>
@@ -150,12 +153,13 @@ function Entry({ name, setName, onCreate, onJoin, conn }) {
       <section className="card join">
         <label className="lbl" htmlFor="pname">你的名字</label>
         <input id="pname" className="input" maxLength={12} placeholder="例如：小明" value={name} onChange={(e) => setName(e.target.value)} />
-        <button className="btn primary" disabled={!conn} onClick={onCreate}>建立房間</button>
+        <button className="btn primary" disabled={busy} onClick={onCreate}>{busy ? '連線中…' : '建立房間'}</button>
         <div className="or"><span>或輸入朋友給你的房號</span></div>
         <form className="row" onSubmit={(e) => { e.preventDefault(); if (code.trim()) onJoin(code.trim().toUpperCase()); }}>
-          <input id="rcode" className="input code" maxLength={4} placeholder="ABCD" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} aria-label="房號" />
-          <button className="btn" disabled={!conn || code.trim().length < 4} type="submit">加入</button>
+          <input id="rcode" className="input code" maxLength={CODE_LEN} placeholder="ABCDE" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} aria-label="房號" />
+          <button className="btn" disabled={busy || code.trim().length < CODE_LEN} type="submit">加入</button>
         </form>
+        <p className="muted small">開房的人就是房主，遊戲在房主的瀏覽器上運算。房主要開著這個頁面，對局才能進行。</p>
       </section>
     </main>
   );
@@ -181,7 +185,7 @@ function Lobby({ st, you, act, flash }) {
         <section className="card">
           <div className="lbl">房號</div>
           <div className="roomcode">{st.code}</div>
-          <p className="muted small">把房號或連結傳給對手，他打開就會加入。</p>
+          <p className="muted small">把房號或連結傳給對手，對方打開就會加入。</p>
           <div className="link"><code>{link}</code><button className="btn sm" onClick={copy}>複製</button></div>
         </section>
         <section className="card">
