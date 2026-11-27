@@ -1,7 +1,7 @@
 import * as E from '../../lib/game.js';
 import { getMap } from '../../lib/mapgen.js';
 import { buildGeo, drawScene, CS } from '../../lib/mapdraw.js';
-import { mapTheme, nationColors } from '../../lib/theme.js';
+import { mapTheme, nationColors, MAP_THEMES } from '../../lib/theme.js';
 import { startSeaBg } from '../../lib/seabg.js';
 
 const q = new URLSearchParams(location.search);
@@ -9,6 +9,8 @@ const theme = q.get('theme') || 'classic';
 const view = q.get('view') || 'play';
 if (theme !== 'classic') document.documentElement.dataset.theme = theme;
 const { NATIONS, NATION_KEYS, MAP_TYPES, RES_LABEL } = E;
+// 預覽用：?land=<JSON> 可覆寫地圖主題的欄位，快速比較土地的樣子
+if (q.get('land')) Object.assign(MAP_THEMES[theme] || {}, JSON.parse(q.get('land')));
 
 // 固定亂數，每次得到同一局
 (function seed() { let a = 20261127; Math.random = () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; })();
