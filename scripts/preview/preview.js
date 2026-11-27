@@ -18,7 +18,7 @@ if (q.get('land')) Object.assign(MAP_THEMES[theme] || {}, JSON.parse(q.get('land
 function makeState() {
   const st = E.newRoom('QX7KD');
   st.players = [E.newPlayer('宥成'), E.newPlayer('柚子')];
-  st.players[0].nation = 'SU'; st.players[1].nation = 'DE';
+  st.players[0].nation = q.get('n0') || 'SU'; st.players[1].nation = q.get('n1') || 'DE';
   st.mapType = 'mixed'; st.seed = 4711;
   if (view === 'lobby') { st.players[1].nation = 'FR'; st.players[0].nation = 'JP'; return st; }
   E.applyAction(st, 0, { type: 'start' });
@@ -152,7 +152,7 @@ if (cv) {
   if (new URLSearchParams(location.search).get('logo') !== '0') {
     await Promise.all(NATION_KEYS.map((k) => new Promise((res) => { const im = new Image(); im.onload = () => { logos[k] = im; res(); }; im.onerror = res; im.src = `/ink/logo/${k}.webp`; })));
   }
-  drawScene(ctx, g, map, view === 'lobby' ? null : st, view === 'lobby' ? null : st.__ui, 1000, { th, ncol, dpr, reduce: true, edge: { key: '', paths: [] }, own: { key: '', canvas: null }, rings: new Map(), logos, logoN: 1, cssW: cv.clientWidth });
+  drawScene(ctx, g, map, view === 'lobby' ? null : st, view === 'lobby' ? null : st.__ui, 1000, { th, ncol, dpr, reduce: true, edge: { key: '', paths: [] }, own: { key: '', canvas: null }, rings: new Map(), logos, logoN: 1, cap: new URLSearchParams(location.search).get('cap') || 'flag', capBig: new URLSearchParams(location.search).get('big') !== '0', cssW: cv.clientWidth });
 }
 // 背景水紋（和正式版同一份程式）
 if (theme !== 'classic') startSeaBg(document.getElementById('seabg'));

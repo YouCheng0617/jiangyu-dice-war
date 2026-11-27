@@ -1,3 +1,4 @@
+@font-face { font-family: 'Reggae One'; src: url(/fonts/ReggaeOne-sub.woff) format('woff'); font-weight: 400; font-display: swap; }
 /* 版面：作戰室。左邊是攤開的羊皮紙地圖，右邊是指揮面板；手機上地圖在上、面板在下，行動鍵固定在底部。 */
 :root {
   --ink: #141a1f;
@@ -30,6 +31,7 @@
   --card-radius: 8px;
   /* 國家色：預設值；各主題可覆寫 --n-XX */
   --n-JP: #e06b86; --n-UK: #9a6ee0; --n-US: #e8962f; --n-IT: #4aa866; --n-FR: #3c8ce0; --n-DE: #8d9aa6; --n-SU: #d2463c;
+  --f-brush: 'Reggae One', 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif;
   --f-display: 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif;
   --f-body: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
@@ -61,7 +63,7 @@ button, input { font: inherit; color: inherit; }
   font: 900 22px var(--f-display); color: var(--mark-fg); background: var(--mark-bg);
   border-radius: var(--mark-radius); transform: rotate(var(--mark-rot)); box-shadow: 2px 2px 0 var(--mark-shadow);
 }
-h1 { margin: 0; font: 900 22px/1.1 var(--f-display); letter-spacing: .06em; }
+h1 { margin: 0; font: 400 24px/1.1 var(--f-brush); letter-spacing: .06em; }
 .tag { margin: 2px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .12em; }
 .topr { display: flex; align-items: center; gap: 10px; }
 .net { font-size: 12px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
@@ -103,11 +105,11 @@ p { margin: 0; }
 
 /* 入口 */
 .entry { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px; align-items: start; padding-top: 24px; }
-.hero h2 { font: 900 clamp(28px, 4.4vw, 48px)/1.15 var(--f-display); margin: 0 0 14px; text-wrap: balance; letter-spacing: .02em; }
+.hero h2 { font: 400 clamp(28px, 4.4vw, 48px)/1.15 var(--f-brush); margin: 0 0 14px; text-wrap: balance; letter-spacing: .02em; }
 .hero p { color: var(--text-soft); max-width: 34em; }
 .nlist { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
 .nlist li { padding: 10px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--pc); display: flex; flex-direction: column; }
-.nlist b { font-family: var(--f-display); }
+.nlist b { font-family: var(--f-brush); font-weight: 400; font-size: 16px; }
 .nlogo { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
 .nbtn .nlogo { margin-bottom: 6px; }
 .nlist span { font-size: 12px; color: var(--muted); }
@@ -149,7 +151,7 @@ p { margin: 0; }
   background: var(--ink); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 1px;
   box-shadow: inset 3px 0 0 var(--pc);
 }
-.nbtn b { font-family: var(--f-display); font-size: 15px; }
+.nbtn b { font-family: var(--f-brush); font-weight: 400; font-size: 15px; }
 .nbtn small { color: var(--muted); font-size: 11px; }
 .nbtn.on { border-color: var(--pc); background: color-mix(in srgb, var(--pc) 22%, var(--ink)); }
 .nbtn:disabled { opacity: .35; cursor: not-allowed; }
@@ -162,7 +164,7 @@ p { margin: 0; }
   display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 10px 14px;
   background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 55%, var(--panel)), color-mix(in srgb, var(--pc) 18%, var(--panel)));
 }
-.turn .flag b { font: 900 22px var(--f-display); letter-spacing: .08em; }
+.turn .flag b { font: 400 22px var(--f-brush); letter-spacing: .08em; }
 .turn .flag span { font-size: 13px; opacity: .85; }
 .turn .skill, .turn .ready { padding: 10px 14px 0; }
 .turn > :last-child { padding-bottom: 12px; }

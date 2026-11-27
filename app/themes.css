@@ -166,3 +166,6 @@ html[data-theme] .seabg { display: block; }
 html[data-theme] .hero { background-image: none; }
 html[data-theme] .hero::before { display: none; }
 @media (max-width: 820px) { .seabg { height: 22vh; opacity: .35; } }
+
+/* 毛筆字體本身已經很粗，不再加粗 */
+html[data-theme] h1, html[data-theme] .hero h2 { font-weight: 400; }

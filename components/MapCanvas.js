@@ -36,11 +36,12 @@ export default function MapCanvas({ map, st, ui, onTap, onHover }) {
       const im = new Image(); im.src = `/ink/logo/${k}.webp`;
       im.onload = () => { logos[k] = im; envx.logoN++; };
     }
+    try { document.fonts?.load('11px "Reggae One"'); } catch (e) { /* 字體載入失敗就用備用字體 */ }
     let raf;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const draw = (ts) => {
       const { st, ui } = live.current;
-      drawScene(ctx, g, map, st, ui, ts, { th, ncol, dpr, reduce, edge, own, rings, logos, get logoN() { return envx.logoN; }, cssW: cv.clientWidth });
+      drawScene(ctx, g, map, st, ui, ts, { th, ncol, dpr, reduce, edge, own, rings, logos, cap: 'flag', capBig: true, get logoN() { return envx.logoN; }, cssW: cv.clientWidth });
       raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
