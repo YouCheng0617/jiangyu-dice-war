@@ -2,7 +2,8 @@
 
 更新日期：2026-11-27　負責人：劉宥成
 
-> 線上網址：（待補：請貼上 Vercel 的 xxx.vercel.app）
+> 線上網址：https://jiangyu-dice-war.vercel.app
+> ⚠️ 本文件描述的是改版前（暗色作戰室）的樣子。最新的設計變更請看 [`design-changelog.md`](design-changelog.md)。
 > 請先實際開兩個分頁玩一局，再開始設計。
 
 ## 1. 遊戲介紹
