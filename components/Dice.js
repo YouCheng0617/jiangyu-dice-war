@@ -7,6 +7,12 @@ export default function Dice({ ev, color, mine, onDone }) {
   const [final, setFinal] = useState(false);
   const done = useRef(false);
   const finish = () => { if (!done.current) { done.current = true; onDone(); } };
+  // 擲骰期間鎖住背景捲動，避免手指滑動穿透到後面的頁面
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   useEffect(() => {
     let n = 0, to;

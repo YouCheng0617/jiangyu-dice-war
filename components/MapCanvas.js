@@ -48,11 +48,11 @@ export default function MapCanvas({ map, st, ui, onTap, onHover }) {
     return () => cancelAnimationFrame(raf);
   }, [map, themeTick]);
 
-  const pick = (e) => {
+  const pick = (e, touch) => {
     const cv = ref.current, m = live.current.map;
     const r = cv.getBoundingClientRect();
-    const cx = Math.floor(((e.clientX - r.left) / r.width) * m.W);
-    const cy = Math.floor(((e.clientY - r.top) / r.height) * m.H);
+    const fx = ((e.clientX - r.left) / r.width) * m.W, fy = ((e.clientY - r.top) / r.height) * m.H;
+    const cx = Math.floor(fx), cy = Math.floor(fy);
     // 手指點在海岸附近也算數：往外找最近的陸地
     for (let rad = 0; rad <= 2; rad++) {
       let best = -1, bd = 1e9;
@@ -63,6 +63,16 @@ export default function MapCanvas({ map, st, ui, onTap, onHover }) {
         if (m.land[i] && dx * dx + dy * dy < bd) { bd = dx * dx + dy * dy; best = m.tid[i]; }
       }
       if (best >= 0) return best;
+    }
+    // 手機上手指較粗：點不到任何土地時，選最近的領土（約 30px 內）
+    if (touch) {
+      const per = r.width / m.W; // 每格的 CSS 像素
+      let best = -1, bd = Infinity;
+      for (const T of m.T) {
+        const d = Math.hypot(T.lx - fx, T.ly - fy);
+        if (d < bd) { bd = d; best = T.id; }
+      }
+      if (best >= 0 && bd * per <= 30) return best;
     }
     return -1;
   };
@@ -79,7 +89,7 @@ export default function MapCanvas({ map, st, ui, onTap, onHover }) {
         if (t !== lastHover.current) { lastHover.current = t; live.current.onHover?.(t); }
       }}
       onPointerLeave={() => { lastHover.current = -1; live.current.onHover?.(-1); }}
-      onClick={(e) => live.current.onTap?.(pick(e), lastType.current)}
+      onClick={(e) => live.current.onTap?.(pick(e, lastType.current === 'touch'), lastType.current)}
     />
   );
 }

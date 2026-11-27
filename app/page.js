@@ -387,7 +387,7 @@ function Game({ st, you, act }) {
       </section>
 
       <aside className="side">
-        <TurnCard st={st} you={you} />
+        <TurnCard st={st} you={you} myTurn={myTurn} />
 
         {st.phase === 'play' && myTurn && opts && !opts.recap && (
           <section className="actions" aria-label="行動">
@@ -419,7 +419,7 @@ function ActBtn({ k, label, n, mode, pick, off, free }) {
   );
 }
 
-function TurnCard({ st, you }) {
+function TurnCard({ st, you, myTurn }) {
   const me = st.players[you];
   if (!me) return <section className="card"><p className="muted">你正在觀戰。</p></section>;
   const n = NATIONS[me.nation];
@@ -430,10 +430,11 @@ function TurnCard({ st, you }) {
     ready = left <= 0 ? '技能可用' : `技能冷卻：再 ${left} 回合`;
   }
   return (
-    <section className="turn" data-n={me.nation} style={{ '--pc': n.color }}>
+    <section className={'turn' + (myTurn ? ' active' : '')} data-n={me.nation} style={{ '--pc': n.color }}>
       <div className="flag">
         <b>{n.name}</b>
         <span>{me.name}{!me.alive && '・已滅亡'}</span>
+        {myTurn && <em className="yourturn">▶ 輪到你</em>}
       </div>
       <p className="skill"><b>「{n.skill}」</b>{n.desc}</p>
       {ready && <p className={'ready' + (ready === '技能可用' ? ' ok' : '')}>{ready}</p>}
