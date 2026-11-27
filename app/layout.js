@@ -3,7 +3,7 @@ import './themes.css';
 import SeaBg from '../components/SeaBg.js';
 
 // 預設外觀是宣紙；?theme=classic 可切回原版（會記在這個瀏覽器）
-const THEME_BOOT = `(function(){try{var ok=['xuan','modai','qingshan','zhuyin','classic'];var q=new URLSearchParams(location.search).get('theme');if(q&&ok.indexOf(q)>-1)localStorage.setItem('jy-theme',q);var t=localStorage.getItem('jy-theme');if(!t||ok.indexOf(t)<0)t='xuan';if(t!=='classic')document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='xuan'}})()`;
+const THEME_BOOT = `document.documentElement.dataset.theme='xuan'`;
 
 export const metadata = {
   title: '疆域骰戰',

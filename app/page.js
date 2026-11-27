@@ -5,7 +5,6 @@ import { getMap } from '../lib/mapgen.js';
 import { Net, isHostOf, CODE_LEN } from '../lib/net.js';
 import MapCanvas from '../components/MapCanvas.js';
 import Dice from '../components/Dice.js';
-import ThemePicker from '../components/ThemePicker.js';
 
 const { NATIONS, NATION_KEYS, MAP_TYPES, RES_LABEL } = E;
 
@@ -112,7 +111,6 @@ export default function Home() {
           </div>
         </div>
         <div className="topr">
-          <ThemePicker />
           {(st || busy) && <span className={'net ' + (conn ? 'ok' : 'down')}>{conn ? (guest && !hostOn ? '房主離線' : '已連線') : '連線中…'}</span>}
           {st && <button className="btn ghost sm" onClick={leave}>離開房間</button>}
         </div>
