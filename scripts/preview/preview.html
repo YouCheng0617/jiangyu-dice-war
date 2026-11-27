@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>疆域骰戰：主題預覽</title>
+<!-- 預覽頁：不需要安裝套件，用和網站相同的 CSS 與地圖繪製程式，靜態重現幾個畫面。
+     用法：在專案根目錄開一個靜態伺服器，例如 `npx serve .`，再開
+     /scripts/preview/preview.html?theme=xuan&view=play （view：entry、lobby、play、dice、over） -->
+<style>
+  @font-face { font-family: 'Noto Serif TC'; font-weight: 700 900; src: local('Noto Serif CJK TC Bold'), local('NotoSerifCJKtc-Bold'), local('Noto Serif TC Bold'); }
+</style>
+<link rel="stylesheet" href="../../app/globals.css">
+<link rel="stylesheet" href="../../app/themes.css">
+</head>
+<body>
+<canvas id="seabg" class="seabg"></canvas>
+<div id="app"></div>
+<script type="module" src="./preview.js"></script>
+</body>
+</html>

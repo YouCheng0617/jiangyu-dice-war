@@ -5,6 +5,7 @@ import { getMap } from '../lib/mapgen.js';
 import { Net, isHostOf, CODE_LEN } from '../lib/net.js';
 import MapCanvas from '../components/MapCanvas.js';
 import Dice from '../components/Dice.js';
+import ThemePicker from '../components/ThemePicker.js';
 
 const { NATIONS, NATION_KEYS, MAP_TYPES, RES_LABEL } = E;
 
@@ -111,6 +112,7 @@ export default function Home() {
           </div>
         </div>
         <div className="topr">
+          <ThemePicker />
           {(st || busy) && <span className={'net ' + (conn ? 'ok' : 'down')}>{conn ? (guest && !hostOn ? '房主離線' : '已連線') : '連線中…'}</span>}
           {st && <button className="btn ghost sm" onClick={leave}>離開房間</button>}
         </div>
@@ -144,7 +146,7 @@ function Entry({ name, setName, onCreate, onJoin, busy }) {
         <p>選一個國家、定下首都，向四周開墾空地。遇到對手就擲 d12：大成功直接拿地，大失敗則賠上自己的出兵地。攻陷對方首都兩次的一方獲勝。</p>
         <ul className="nlist">
           {NATION_KEYS.map((k) => (
-            <li key={k} style={{ '--pc': NATIONS[k].color }}>
+            <li key={k} data-n={k} style={{ '--pc': NATIONS[k].color }}>
               <b>{NATIONS[k].name}</b><span>{NATIONS[k].skill}</span>
             </li>
           ))}
@@ -216,7 +218,7 @@ function Lobby({ st, you, act, flash }) {
                     {NATION_KEYS.map((k) => {
                       const taken = st.players.some((q, j) => j !== i && q.nation === k);
                       return (
-                        <button key={k} className={'nbtn' + (p.nation === k ? ' on' : '')} style={{ '--pc': NATIONS[k].color }} disabled={taken} onClick={() => act({ type: 'nation', nation: k })}>
+                        <button key={k} data-n={k} className={'nbtn' + (p.nation === k ? ' on' : '')} style={{ '--pc': NATIONS[k].color }} disabled={taken} onClick={() => act({ type: 'nation', nation: k })}>
                           <b>{NATIONS[k].name}</b><small>{taken ? '對手已選' : NATIONS[k].skill}</small>
                         </button>
                       );
@@ -402,7 +404,7 @@ function TurnCard({ st, you }) {
     ready = left <= 0 ? '技能可用' : `技能冷卻：再 ${left} 回合`;
   }
   return (
-    <section className="turn" style={{ '--pc': n.color }}>
+    <section className="turn" data-n={me.nation} style={{ '--pc': n.color }}>
       <div className="flag">
         <b>{n.name}</b>
         <span>{me.name}{!me.alive && '・已滅亡'}</span>
@@ -475,7 +477,7 @@ function Roster({ st, you }) {
         const n = NATIONS[p.nation]; const c = E.cnt(st, i);
         const capM = p.cap >= 0 ? st.t[p.cap].m : 0;
         return (
-          <div key={i} className={'rrow' + (st.cur === i && st.phase === 'play' ? ' cur' : '')} style={{ '--pc': n.color }}>
+          <div key={i} data-n={p.nation} className={'rrow' + (st.cur === i && st.phase === 'play' ? ' cur' : '')} style={{ '--pc': n.color }}>
             <div className="rtop">
               <span className="dot" />
               <b>{n.name}</b>

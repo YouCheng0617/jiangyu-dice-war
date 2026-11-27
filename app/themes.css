@@ -1,0 +1,167 @@
+/* 水墨主題：用 <html data-theme="..."> 切換。沒有 data-theme 時是原本的暗色「作戰室」（見 globals.css）。
+   主題只改變數與少數裝飾；國家色用 --n-XX，結果色用 --crit/--good/--fail/--bad。
+   四個主題：xuan 宣紙、modai 墨夜、qingshan 青山、zhuyin 朱印。地圖畫布的配色在 lib/theme.js。 */
+
+/* ── 共用：淺色水墨（宣紙／青山／朱印）的文字與元件 ── */
+html[data-theme="xuan"], html[data-theme="qingshan"], html[data-theme="zhuyin"] { color-scheme: light; }
+
+/* ── 宣紙 ── */
+html[data-theme="xuan"] {
+  --ink: #e8e2d0; --panel: #f8f4e9; --panel2: #eee8d6; --line: #c9c0a8;
+  --text: #1f1d1a; --muted: #6c675b; --parch: #fbf8ef;
+  --brass: #b8322a; --on-brass: #fff6ec; --on-brass-2: #f3d8cf; --brass-hover: #cb4037;
+  --crit: #e2b232; --good: #5ca67a; --fail: #aaa597; --bad: #1f1d1a;
+  --crit-text: #84600a; --good-text: #2e6d49; --fail-text: #6a665b; --fail-text2: #6a665b; --bad-text: #1f1d1a;
+  --on-chip: #1f1d1a; --on-bad: #f6f1e4; --strip-ring: #1f1d1a;
+  --btn-hover-bg: #e4dcc6; --btn-hover-line: #a79e86;
+  --text-soft: #4a463e; --text-soft2: #4a463e; --text-soft3: #4a463e;
+  --off-line: #c99c94; --off-text: #9a3a30; --warn-text: #a8362a;
+  --toast-bg: #fbe8e2; --toast-line: #d49a90; --toast-text: #7a2218;
+  --hostoff-bg: #f5ebcd; --hostoff-line: #c9a850; --hostoff-text: #6a5214;
+  --overlay: rgba(232,226,208,.66); --overlay2: rgba(232,226,208,.6);
+  --die-ink: #1f1d1a;
+  --mark-fg: #f8efe0; --mark-bg: #b8322a; --mark-shadow: #6e1d17; --mark-radius: 3px; --mark-rot: -3deg;
+  --map-border: #1f1d1a; --map-frame: #d6cdb4; --map-shadow: rgba(70,58,36,.28);
+  --bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .2  0 0 0 .10 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"), radial-gradient(900px 420px at 12% -8%, rgba(40,38,34,.10), transparent 62%), radial-gradient(700px 360px at 100% 0, rgba(40,38,34,.07), transparent 60%);
+  --hero-art: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 220' preserveAspectRatio='none'><defs><linearGradient id='f' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%25231f1d1a' stop-opacity='1'/><stop offset='.75' stop-color='%25231f1d1a' stop-opacity='.55'/><stop offset='1' stop-color='%25231f1d1a' stop-opacity='0'/></linearGradient><filter id='b'><feGaussianBlur stdDeviation='1.4'/></filter></defs><g filter='url(%23b)' fill='url(%23f)'><path opacity='0.16' d='M0 150 L60 112 L110 136 L190 72 L260 126 L330 92 L420 140 L500 86 L580 130 L660 96 L740 135 L800 120 L800 220 L0 220Z'/><path opacity='0.24' d='M0 186 L80 152 L150 176 L240 122 L320 170 L410 142 L500 182 L600 132 L700 172 L800 152 L800 220 L0 220Z'/><path opacity='0.38' d='M0 212 L120 188 L220 206 L330 172 L450 209 L560 182 L680 207 L800 192 L800 220 L0 220Z'/></g></svg>");
+  --deco: #1f1d1a; --deco-red: #b8322a;
+  --card-radius: 4px;
+  --n-JP: #e4709a; --n-UK: #9a5bc4; --n-US: #e0881f; --n-IT: #3d9a62; --n-FR: #2a62b8; --n-DE: #2f7d86; --n-SU: #9c1f1a;
+}
+
+/* ── 墨夜 ── */
+html[data-theme="modai"] {
+  --ink: #0d0f10; --panel: #171a1b; --panel2: #212526; --line: #353a3c;
+  --text: #ece6d6; --muted: #9a9689; --parch: #e8e2d0;
+  --brass: #c93a28; --on-brass: #fff3ea; --on-brass-2: #f6cfc4; --brass-hover: #de5340;
+  --crit: #f0c94a; --good: #7cc496; --fail: #8f938f; --bad: #ff6048;
+  --fail-text: #b4b7b3; --fail-text2: #b4b7b3;
+  --on-chip: #101213; --on-bad: #1b0c09; --strip-ring: #ece6d6;
+  --btn-hover-bg: #2a2f31; --btn-hover-line: #565d60;
+  --text-soft: #c9c3b2; --text-soft2: #c9c3b2; --text-soft3: #c9c3b2;
+  --overlay: rgba(6,8,9,.66); --overlay2: rgba(6,8,9,.6);
+  --mark-fg: #f6efe2; --mark-bg: #c93a28; --mark-shadow: #5f1a12; --mark-radius: 3px; --mark-rot: -3deg;
+  --map-border: #8b8574; --map-frame: #0a0b0c; --map-shadow: rgba(0,0,0,.65);
+  --bg-image: radial-gradient(900px 500px at 12% -10%, rgba(150,160,158,.16), transparent 62%), radial-gradient(760px 420px at 100% 0, rgba(110,118,116,.12), transparent 60%), radial-gradient(600px 300px at 50% 110%, rgba(150,160,158,.08), transparent 70%);
+  --hero-art: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 220' preserveAspectRatio='none'><defs><linearGradient id='f' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%2523ece6d6' stop-opacity='1'/><stop offset='.75' stop-color='%2523ece6d6' stop-opacity='.55'/><stop offset='1' stop-color='%2523ece6d6' stop-opacity='0'/></linearGradient><filter id='b'><feGaussianBlur stdDeviation='1.4'/></filter></defs><g filter='url(%23b)' fill='url(%23f)'><path opacity='0.1' d='M0 150 L60 112 L110 136 L190 72 L260 126 L330 92 L420 140 L500 86 L580 130 L660 96 L740 135 L800 120 L800 220 L0 220Z'/><path opacity='0.16' d='M0 186 L80 152 L150 176 L240 122 L320 170 L410 142 L500 182 L600 132 L700 172 L800 152 L800 220 L0 220Z'/><path opacity='0.26' d='M0 212 L120 188 L220 206 L330 172 L450 209 L560 182 L680 207 L800 192 L800 220 L0 220Z'/></g></svg>");
+  --deco: #ece6d6; --deco-red: #c93a28;
+  --card-radius: 4px;
+  --n-JP: #f08aa8; --n-UK: #9b78e0; --n-US: #f0a030; --n-IT: #54b878; --n-FR: #4a8de0; --n-DE: #45b0ae; --n-SU: #8c2220;
+}
+
+/* ── 青山 ── */
+html[data-theme="qingshan"] {
+  --ink: #dce5e0; --panel: #f1f5f2; --panel2: #e3ebe7; --line: #b4c4be;
+  --text: #17262a; --muted: #5d706e; --parch: #f7faf6;
+  --brass: #1f6e78; --on-brass: #f2faf8; --on-brass-2: #cfe6e4; --brass-hover: #2a8590;
+  --crit: #dcaa28; --good: #55a37b; --fail: #b4c2be; --bad: #17262a;
+  --crit-text: #7a5a06; --good-text: #2b6a4b; --fail-text: #5b6c69; --fail-text2: #5b6c69; --bad-text: #17262a;
+  --on-chip: #17262a; --on-bad: #eef5f2; --strip-ring: #17262a;
+  --btn-hover-bg: #d6e1dc; --btn-hover-line: #93a8a1;
+  --text-soft: #3f524f; --text-soft2: #3f524f; --text-soft3: #3f524f;
+  --off-line: #c99c94; --off-text: #9a3a30; --warn-text: #a8362a;
+  --toast-bg: #fbe8e2; --toast-line: #d49a90; --toast-text: #7a2218;
+  --hostoff-bg: #f2ecd2; --hostoff-line: #c4ab55; --hostoff-text: #66531a;
+  --overlay: rgba(220,229,224,.68); --overlay2: rgba(220,229,224,.62);
+  --die-ink: #17262a;
+  --mark-fg: #eef8f6; --mark-bg: #1f6e78; --mark-shadow: #0f3d44; --mark-radius: 3px; --mark-rot: -3deg;
+  --map-border: #17262a; --map-frame: #c5d3ce; --map-shadow: rgba(30,56,56,.26);
+  --bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .2  0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"), linear-gradient(180deg, #c3d3cf 0, rgba(195,211,207,0) 380px), radial-gradient(800px 380px at 85% -6%, rgba(20,50,56,.12), transparent 62%);
+  --hero-art: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 220' preserveAspectRatio='none'><defs><linearGradient id='f' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%252317262a' stop-opacity='1'/><stop offset='.75' stop-color='%252317262a' stop-opacity='.55'/><stop offset='1' stop-color='%252317262a' stop-opacity='0'/></linearGradient><filter id='b'><feGaussianBlur stdDeviation='2.2'/></filter></defs><g filter='url(%23b)' fill='url(%23f)'><path opacity='0.18' d='M0 150 L60 112 L110 136 L190 72 L260 126 L330 92 L420 140 L500 86 L580 130 L660 96 L740 135 L800 120 L800 220 L0 220Z'/><path opacity='0.28' d='M0 186 L80 152 L150 176 L240 122 L320 170 L410 142 L500 182 L600 132 L700 172 L800 152 L800 220 L0 220Z'/><path opacity='0.42' d='M0 212 L120 188 L220 206 L330 172 L450 209 L560 182 L680 207 L800 192 L800 220 L0 220Z'/></g></svg>");
+  --deco: #17262a; --deco-red: #b8453d;
+  --card-radius: 6px;
+  --n-JP: #e4709a; --n-UK: #9a5bc4; --n-US: #e0881f; --n-IT: #3d9a62; --n-FR: #2a62b8; --n-DE: #2f7d86; --n-SU: #9c1f1a;
+}
+
+/* ── 朱印 ── */
+html[data-theme="zhuyin"] {
+  --deco: #0e0d0c; --deco-red: #c4281c;
+  --ink: #f1eee5; --panel: #ffffff; --panel2: #f3f0e7; --line: #0e0d0c;
+  --text: #0e0d0c; --muted: #58554d; --parch: #ffffff;
+  --brass: #c4281c; --on-brass: #ffffff; --on-brass-2: #ffd9d3; --brass-hover: #d83a2d;
+  --crit: #f0bb2c; --good: #4fa070; --fail: #b4b0a5; --bad: #0e0d0c;
+  --crit-text: #7a5600; --good-text: #226044; --fail-text: #5d5a52; --fail-text2: #5d5a52; --bad-text: #0e0d0c;
+  --on-chip: #0e0d0c; --on-bad: #ffffff; --strip-ring: #c4281c;
+  --btn-hover-bg: #ebe7da; --btn-hover-line: #0e0d0c;
+  --text-soft: #34322d; --text-soft2: #34322d; --text-soft3: #34322d;
+  --off-line: #c4281c; --off-text: #c4281c; --warn-text: #c4281c;
+  --toast-bg: #ffffff; --toast-line: #c4281c; --toast-text: #c4281c;
+  --hostoff-bg: #fff6d8; --hostoff-line: #0e0d0c; --hostoff-text: #0e0d0c;
+  --overlay: rgba(241,238,229,.72); --overlay2: rgba(241,238,229,.66);
+  --die-ink: #0e0d0c;
+  --mark-fg: #ffffff; --mark-bg: #c4281c; --mark-shadow: #0e0d0c; --mark-radius: 2px; --mark-rot: -3deg;
+  --map-border: #0e0d0c; --map-frame: #0e0d0c; --map-shadow: rgba(0,0,0,.25);
+  --bg-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .2  0 0 0 .06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"), radial-gradient(500px 260px at 0 0, rgba(14,13,12,.08), transparent 70%);
+  --hero-art: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 220' preserveAspectRatio='none'><defs><linearGradient id='f' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%25230e0d0c' stop-opacity='1'/><stop offset='.75' stop-color='%25230e0d0c' stop-opacity='.55'/><stop offset='1' stop-color='%25230e0d0c' stop-opacity='0'/></linearGradient><filter id='b'><feGaussianBlur stdDeviation='0.6'/></filter></defs><g filter='url(%23b)' fill='url(%23f)'><path opacity='0.22' d='M0 150 L60 112 L110 136 L190 72 L260 126 L330 92 L420 140 L500 86 L580 130 L660 96 L740 135 L800 120 L800 220 L0 220Z'/><path opacity='0.34' d='M0 186 L80 152 L150 176 L240 122 L320 170 L410 142 L500 182 L600 132 L700 172 L800 152 L800 220 L0 220Z'/><path opacity='0.6' d='M0 212 L120 188 L220 206 L330 172 L450 209 L560 182 L680 207 L800 192 L800 220 L0 220Z'/></g></svg>");
+  --card-radius: 2px;
+  --n-JP: #e4709a; --n-UK: #9a5bc4; --n-US: #e0881f; --n-IT: #3d9a62; --n-FR: #2a62b8; --n-DE: #2f7d86; --n-SU: #9c1f1a;
+}
+
+/* ── 各主題共同的水墨裝飾（classic 沒有） ── */
+html[data-theme] h1, html[data-theme] .hero h2, html[data-theme] .dtitle, html[data-theme] .obox h2 { letter-spacing: .08em; }
+html[data-theme] .hero { position: relative; padding-top: 118px; }
+html[data-theme] .hero::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 150px; pointer-events: none;
+  background: var(--hero-art) center bottom / 100% 100% no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+/* 軟化：卡片像半透明的宣紙，邊框淡、陰影柔，地圖邊緣暈入紙面 */
+html[data-theme] .card, html[data-theme] .turn {
+  border-color: color-mix(in srgb, var(--line) 50%, transparent); border-radius: 10px;
+  background: color-mix(in srgb, var(--panel) 80%, transparent); backdrop-filter: blur(3px);
+  box-shadow: 0 12px 30px -18px color-mix(in srgb, var(--text) 50%, transparent);
+}
+html[data-theme] .turn { overflow: hidden; }
+html[data-theme] .btn { border-radius: 8px; border-color: color-mix(in srgb, var(--line) 65%, transparent); }
+html[data-theme] .input, html[data-theme] .link, html[data-theme] .seg, html[data-theme] .nbtn, html[data-theme] .odds, html[data-theme] .devnote { border-radius: 8px; }
+html[data-theme] .input, html[data-theme] .seg, html[data-theme] .nbtn { border-color: color-mix(in srgb, var(--line) 65%, transparent); }
+html[data-theme] .map {
+  border: 0; border-radius: 0; box-shadow: none;
+  -webkit-mask-image: radial-gradient(ellipse 68% 66% at 50% 50%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse 68% 66% at 50% 50%, #000 58%, transparent 100%);
+}
+html[data-theme] h1 { text-shadow: 0 0 .6px currentColor, 0 1px 7px color-mix(in srgb, var(--text) 20%, transparent); }
+html[data-theme] .strip i { border-radius: 50%; }
+html[data-theme] .die { border-radius: 46% 54% 50% 50% / 54% 46% 52% 48%; }
+html[data-theme] .nlist li { border-top-width: 4px; }
+html[data-theme] .die { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--die-ink) 70%, transparent), 0 8px 18px color-mix(in srgb, var(--die-ink) 22%, transparent); }
+html[data-theme] .die small { opacity: .7; }
+html[data-theme] .dbox { border-radius: 8px; }
+html[data-theme] .themepick select { color: var(--text); }
+
+/* 墨夜的卡片：細銀邊 */
+html[data-theme="modai"] .card, html[data-theme="modai"] .turn { border-color: #3d4345; }
+
+/* 朱印：墨色最重的版本——黑邊較粗、紅色當唯一的亮點（邊框仍然柔和） */
+html[data-theme="zhuyin"] .card, html[data-theme="zhuyin"] .turn, html[data-theme="zhuyin"] .dbox, html[data-theme="zhuyin"] .obox { border-width: 1.5px; border-color: color-mix(in srgb, var(--line) 80%, transparent); }
+html[data-theme="zhuyin"] .btn { border-width: 1.5px; }
+html[data-theme="zhuyin"] .input, html[data-theme="zhuyin"] .seg, html[data-theme="zhuyin"] .nbtn { border-width: 1.5px; }
+html[data-theme="zhuyin"] .net { border-color: var(--line); color: var(--text); }
+html[data-theme="zhuyin"] .turn .flag { background: color-mix(in srgb, var(--pc) 60%, #fff); border-bottom: 1.5px solid color-mix(in srgb, var(--line) 80%, transparent); }
+html[data-theme="zhuyin"] .hero h2 { text-shadow: 3px 3px 6px color-mix(in srgb, var(--brass) 28%, transparent); }
+html[data-theme] .die small { right: 22px; bottom: 16px; }
+
+/* ══ 極簡水墨（最終版）：只有頂線的面板、方正的軍令牌、毛筆標題底線，背景是淡淡的水紋（見 components/SeaBg.js） ══ */
+html[data-theme] h1 { position: relative; letter-spacing: .1em; font-weight: 900; }
+html[data-theme] h1::after {
+  content: ''; position: absolute; left: -4px; bottom: -7px; width: 112%; height: 9px; background: var(--brass); opacity: .85;
+  -webkit-mask: url(/ink/brush-line.svg) center / 100% 100% no-repeat; mask: url(/ink/brush-line.svg) center / 100% 100% no-repeat;
+}
+html[data-theme] .tag { margin-top: 8px; }
+html[data-theme] .or::before, html[data-theme] .or::after { height: 1px; background: var(--text); opacity: .3; }
+html[data-theme] .card, html[data-theme] .turn {
+  position: relative; border: 0; border-top: 3px solid var(--text); border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none;
+}
+html[data-theme] .turn { overflow: visible; }
+html[data-theme] .btn, html[data-theme] .input, html[data-theme] .link, html[data-theme] .seg, html[data-theme] .nbtn, html[data-theme] .odds, html[data-theme] .devnote, html[data-theme] .dbox { border-radius: 2px; }
+html[data-theme] .btn { border-width: 2px; border-color: color-mix(in srgb, var(--text) 70%, transparent); font-weight: 800; letter-spacing: .12em; }
+html[data-theme] .die { border-radius: 8px; }
+html[data-theme] .turn .flag { letter-spacing: .3em; border-bottom: 3px solid color-mix(in srgb, var(--text) 70%, transparent); }
+html[data-theme] .nlist li { border-top-width: 6px; }
+html[data-theme] .hero h2 { letter-spacing: .1em; font-weight: 900; }
+html[data-theme] .map { -webkit-mask-image: none; mask-image: none; }   /* 地圖有雙層框線，不需要柔邊 */
+html[data-theme] .seabg { display: block; }
+html[data-theme] .hero { background-image: none; }
+html[data-theme] .hero::before { display: none; }
+@media (max-width: 820px) { .seabg { height: 22vh; opacity: .6; } }
