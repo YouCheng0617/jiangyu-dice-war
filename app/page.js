@@ -1,7 +1,6 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as E from '../lib/game.js';
-import { getMap } from '../lib/mapgen.js';
 import { Net, isHostOf, CODE_LEN } from '../lib/net.js';
 import MapCanvas from '../components/MapCanvas.js';
 import Dice from '../components/Dice.js';
@@ -93,7 +92,8 @@ export default function Home() {
   const create = () => { reset(); enter(null, true); };
   const joinCode = (code) => { reset(); enter(code, isHostOf(code)); };
   const leave = () => {
-    net.current.close(); setConn(false); setBusy(false);
+    const dissolve = net.current.role === 'host';
+    net.current.close({ dissolve }); setConn(false); setBusy(false);
     history.replaceState(null, '', location.pathname);
     reset();
   };
@@ -115,7 +115,7 @@ export default function Home() {
         </div>
         <div className="topr">
           {(st || busy) && <span className={'net ' + (conn ? 'ok' : 'down')}>{conn ? (guest && !hostOn ? '房主離線' : '已連線') : '連線中…'}</span>}
-          {st && <button className="btn ghost sm" onClick={leave}>離開房間</button>}
+          {st && <button className="btn ghost sm" onClick={leave}>{view?.you === 0 ? '解散房間' : '離開房間'}</button>}
         </div>
       </header>
 
@@ -171,7 +171,7 @@ function Entry({ name, setName, onCreate, onJoin, busy }) {
 
 // ── 大廳 ──────────────────────────────────────────
 function Lobby({ st, you, act, flash }) {
-  const map = getMap(st.mapType, st.seed);
+  const map = E.mapOf(st);
   const host = you === 0;
   const link = typeof window !== 'undefined' ? `${location.origin}${location.pathname}?room=${st.code}` : '';
   const copy = async () => {
@@ -183,7 +183,7 @@ function Lobby({ st, you, act, flash }) {
     <main className="game">
       <section className="board">
         <MapCanvas map={map} st={null} ui={null} />
-        <div className="legend">{MAP_TYPES[st.mapType]}・{map.n} 個區域・{map.lanes.length} 條海路</div>
+        <div className="legend">{MAP_TYPES[st.mapType]}・{E.MAP_SIZES[st.mapSize]}圖・{map.n} 個區域・{map.T.filter((t) => t.mtn).length} 座山脈・{map.lanes.length} 條海路</div>
       </section>
       <aside className="side">
         <section className="card">
@@ -197,6 +197,12 @@ function Lobby({ st, you, act, flash }) {
           <div className="seg" role="group" aria-label="地形">
             {Object.entries(MAP_TYPES).map(([k, v]) => (
               <button key={k} className={st.mapType === k ? 'on' : ''} disabled={!host} onClick={() => act({ type: 'mapType', mapType: k })}>{v}</button>
+            ))}
+          </div>
+          <div className="lbl" style={{ marginTop: 4 }}>大小</div>
+          <div className="seg" role="group" aria-label="地圖大小">
+            {Object.entries(E.MAP_SIZES).map(([k, v]) => (
+              <button key={k} className={st.mapSize === k ? 'on' : ''} disabled={!host} onClick={() => act({ type: 'mapSize', mapSize: k })}>{v}</button>
             ))}
           </div>
           {host ? <button className="btn ghost sm wide" onClick={() => act({ type: 'reroll' })}>換一張地圖</button>
@@ -249,7 +255,7 @@ function Lobby({ st, you, act, flash }) {
 
 // ── 對局 ──────────────────────────────────────────
 function Game({ st, you, act }) {
-  const map = getMap(st.mapType, st.seed);
+  const map = E.mapOf(st);
   const [mode, setMode] = useState(null);
   const [src, setSrc] = useState(-1);
   const [focus, setFocus] = useState(-1);
@@ -345,17 +351,28 @@ function Game({ st, you, act }) {
       <section className="board">
         <div className="banner" style={{ '--pc': curN.color }}>
           <span className="bdot" />
-          {st.phase === 'over' ? '戰爭結束' : st.phase === 'capital' ? '定都階段' : `第 ${st.round} 回合`}
+          {st.phase === 'over' ? '戰爭結束' : st.phase === 'capital' ? '定都階段' : `第 ${st.round} / ${E.MAX_ROUNDS} 回合`}
           <span className="bsep">·</span>
           {st.phase !== 'over' && <b>{st.cur === you ? '輪到你' : `輪到 ${curN.name}`}</b>}
         </div>
         <MapCanvas map={map} st={st} ui={ui} onTap={onTap} onHover={setHover} />
         {st.phase === 'over' && (
           <div className="over">
-            <div className="obox" style={{ '--pc': E.natOf(st, st.winner).color }}>
-              <div className="lbl">{st.winner === you ? '勝利' : '敗北'}</div>
-              <h2>{E.natOf(st, st.winner).name} 統一天下</h2>
-              <p>{st.players[st.winner].name} 在第 {st.round} 回合攻陷敵方首都。</p>
+            <div className="obox" style={{ '--pc': st.winner >= 0 ? E.natOf(st, st.winner).color : 'var(--brass)' }}>
+              <div className="lbl">{st.winner < 0 ? '平局' : st.winner === you ? '勝利' : '敗北'}</div>
+              {st.why === 'time' ? (
+                <>
+                  <h2>{st.winner < 0 ? '雙方平手' : `${E.natOf(st, st.winner).name} 領土最多`}</h2>
+                  <p>第 {E.MAX_ROUNDS} 回合時間到。{st.winner < 0
+                    ? `雙方各有 ${E.cnt(st, 0)} 塊領土。`
+                    : `${st.players[st.winner].name} 以 ${E.cnt(st, st.winner)} 塊領土獲勝。`}</p>
+                </>
+              ) : (
+                <>
+                  <h2>{E.natOf(st, st.winner).name} 統一天下</h2>
+                  <p>{st.players[st.winner].name} 在第 {st.round} 回合攻陷敵方首都。</p>
+                </>
+              )}
               {you === 0 ? <button className="btn primary" onClick={() => act({ type: 'rematch' })}>回大廳再來一局</button>
                 : <p className="muted small">等待房主開新局</p>}
             </div>
@@ -444,7 +461,9 @@ function InfoCard({ st, you, map, t, odds, mode, sel, opts, confirm }) {
         {cd > 0 && <><dt>冷卻</dt><dd className="warn">你在第 {cd} 回合結束前不能再打這裡</dd></>}
       </dl>
       {dev && (
-        <p className="devnote">{dev.sea ? '只隔海相連：擲 d6，出 1 或 6 失敗（成功率 67%）。' : '陸路相連：開墾必定成功。'}</p>
+        <p className="devnote">{dev.dice
+          ? `${[dev.sea && '跨海', dev.mtn && '山脈'].filter(Boolean).join('・')}：擲 d6 ×${dev.dice}，出 1 或 6 失敗（成功率 ${Math.round((2 / 3) ** dev.dice * 100)}%）。`
+          : '陸路相連：開墾必定成功。'}</p>
       )}
       {odds && <OddsView o={odds} map={map} />}
       {confirm && sel.targets.has(t) && <p className="confirm">再點一次確認</p>}
@@ -472,7 +491,7 @@ function OddsView({ o, map }) {
 }
 
 function Roster({ st, you }) {
-  const M = getMap(st.mapType, st.seed);
+  const M = E.mapOf(st);
   const total = M.n;
   return (
     <section className="card roster">
@@ -524,9 +543,10 @@ function Rules() {
       <summary>規則與判定表</summary>
       <ul>
         <li>每回合只能做一件事：<b>開墾</b>、<b>佔領</b>或<b>遷都</b>。</li>
-        <li><b>開墾</b>：與自己可用領土陸路相連的空地必定成功；只隔海相連時擲 d6，出 1 或 6 失敗。</li>
+        <li><b>開墾</b>：與自己可用領土陸路相連的空地必定成功；只隔海相連時擲 d6，出 1 或 6 失敗；開墾山脈也要擲 d6，與跨海疊加。</li>
         <li><b>佔領</b>擲 d12：擲 1 為大失敗、擲 12 為大成功（各 8%）；2–11 加修正值 ≥ 7 為成功，否則失敗。</li>
         <li>修正值：國力差（敵方領土數 − 我方領土數）÷ 3，上限 ±2，打大國比較容易；跨海 −1；再加國家技能。總和限 ±4。</li>
+        <li>山脈：約 15% 的領土。進攻山脈 −1，從山脈出兵 −1；開墾山脈要擲 d6（與跨海疊加，最多 3 次判定）。</li>
         <li><b>成功</b>：目標 +1 層標記。<b>大成功</b>：+2 層。一般領土 2 層即被拿下。</li>
         <li><b>失敗</b>：下一回合不能再打同一塊地。<b>大失敗</b>：同樣冷卻，而且自己的出兵地被加 1 層標記。</li>
         <li>有標記的領土不能出兵、也不能從那裡開墾。連續 {E.RECOVER} 回合沒有新標記，會自動消除 1 層。</li>
