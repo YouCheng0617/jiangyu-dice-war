@@ -132,6 +132,19 @@ p { margin: 0; }
 }
 .bdot { width: 9px; height: 9px; border-radius: 50%; background: var(--pc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc) 30%, transparent); }
 .bsep { color: var(--muted); }
+/* 輪到你：整條亮金色、字放大、脈動 */
+.banner.mine {
+  display: flex; width: 100%; justify-content: center; padding: 9px 16px; font-size: 16px;
+  background: var(--brass); border-color: var(--brass); color: var(--on-brass);
+  animation: turnpulse 1.4s ease-in-out infinite alternate;
+}
+.banner.mine .bdot { background: var(--on-brass); box-shadow: none; }
+.banner.mine .bsep { color: var(--on-brass); opacity: .6; }
+.banner.mine b { font-weight: 900; letter-spacing: .04em; }
+@keyframes turnpulse {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brass) 55%, transparent); }
+  to { box-shadow: 0 0 0 7px color-mix(in srgb, var(--brass) 0%, transparent); }
+}
 .side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 
 /* 大廳 */

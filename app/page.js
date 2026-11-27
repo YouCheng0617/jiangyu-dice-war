@@ -262,6 +262,12 @@ function Game({ st, you, act }) {
   const [hover, setHover] = useState(-1);
   const [confirmT, setConfirmT] = useState(-1);
   const myTurn = (st.phase === 'play' || st.phase === 'capital') && st.cur === you;
+  // 分頁在背景時，標題也會提示輪到你了
+  useEffect(() => {
+    const base = '疆域骰戰';
+    document.title = myTurn ? `▶ 輪到你 · ${base}` : base;
+    return () => { document.title = base; };
+  }, [myTurn]);
 
   useEffect(() => {
     setMode(st.chain || null); setSrc(-1); setConfirmT(-1);
@@ -349,11 +355,11 @@ function Game({ st, you, act }) {
   return (
     <main className="game">
       <section className="board">
-        <div className="banner" style={{ '--pc': curN.color }}>
+        <div className={'banner' + (myTurn ? ' mine' : '')} style={{ '--pc': curN.color }} role="status" aria-live="polite">
           <span className="bdot" />
           {st.phase === 'over' ? '戰爭結束' : st.phase === 'capital' ? '定都階段' : `第 ${st.round} / ${E.MAX_ROUNDS} 回合`}
           <span className="bsep">·</span>
-          {st.phase !== 'over' && <b>{st.cur === you ? '輪到你' : `輪到 ${curN.name}`}</b>}
+          {st.phase !== 'over' && <b>{myTurn ? '▶ 輪到你行動' : `等待 ${curN.name} 行動`}</b>}
         </div>
         <MapCanvas map={map} st={st} ui={ui} onTap={onTap} onHover={setHover} />
         {st.phase === 'over' && (
